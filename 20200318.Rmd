@@ -28,3 +28,38 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+-
+## package
+-
+```{r}
+library(googlesheets4)
+library(dplyr)
+library(lubridate)
+```
+```{r}
+library(dplyr)
+```
+-
+## create object
+-
+```{r}
+a <- 2
+a = 2 # = 與 <-同義
+```
+-
+-
+```{r}
+3 -> b
+```
+-
+```{r}
+a
+```
+Be careful! when you use the broom in environment,you can not find "a".
+
+
+
+
+
+
