@@ -29,9 +29,108 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-```{r}
+## 從3/25的factor Date 開始上課
 
+```{r}
+# 10位學生的主系
+majors10_char <- c('經濟學系','社會學系','社會學系','經濟學系','經濟學系','社會學系','經濟學系','經濟學系','經濟學系','社會學系')
+
+typeof(majors10_char)
+class(majors10_char)
 ```
+## 因為上述佔的空間太大 字數達到40個字 但其實他的類別就只有兩個 所以可以用factor來分成2類
+
+```{r}
+majors10_factor <- factor(majors10_char)
+# 或
+majors10_factor <- factor(
+  c('經濟學系','社會學系','社會學系','經濟學系','經濟學系','社會學系','經濟學系','經濟學系','經濟學系','社會學系')
+)
+
+typeof(majors10_factor)
+class(majors10_factor)
+```
+## 簡單來說就是電腦將經濟學系還有社會學系分成2類 電腦存整數1和2 所以typeof 打出來是integer 然後class出來是factor
+
+## 另外c()裡面不能是不相同的type 如果不相同 電腦也會把它看成相同
+example
+
+```{r}
+a <- c("經濟學系","25")
+## 可以從右邊的environment看出a是一個character 所以之後的25也不能做加減乘除 因為電腦將他視為character
+```
+
+```{r}
+as.integer(majors10_factor) 
+```
+```{r}
+levels(majors10_factor)
+## factor 裡面會有level level的用意就是將分類的規則告訴我們 例如這個例子中就是將社會學系設為1 經濟學系設為2 所以上面的as.integer才會出現2112212221這樣的東西
+## level簡單來說就是factor的對照表
+```
+
+```{r}
+stringInteger <- c("1","2","-11")
+class(stringInteger) # 無法進行數值運算
+a <- as.integer(stringInteger)
+a+2
+```
+```{r}
+trueInteger <- as.integer(stringInteger)
+class(trueInteger) # 可以進行數值運算
+typeof(trueInteger)
+trueInteger+2
+```
+```{r}
+studentId <- c(410773002, 410773015)
+a <- as.character(studentId)
+```
+
+##Date/TIme
+```{r}
+library(lubridate)
+```
+台北 2020-03-18 13:52:40
+```{r}
+tpeTime <- ymd_hms("2020-03-18 13:52:40",
+        tz="Asia/Taipei")
+```
+葡萄牙 Mar.18, 2020, 05:52:40
+```{r}
+pgTime <- mdy_hms("Mar.18, 2020, 05:52:40",tz="Europe/Lisbon")
+typeof(pgTime)
+class(pgTime)
+##在電腦中儲存是數字double 所以如果用as.double 就會顯示出此時間和UTC插了多少秒 因此可以用來看兩個時區的時間是否相同
+as.double(pgTime)
+as.double(tpeTime)
+##不過我們不將此時間的type轉掉 因為秒數對人來說沒有資料上的意義
+```
+```{r}
+with_tz(tpeTime, tzone="UTC")
+with_tz(pgTime, tzone="UTC")
+
+with_tz(tpeTime, tzone="Europe/Paris")
+with_tz(pgTime, tzone="Europe/Paris")
+
+with_tz(tpeTime,tzone = "Africa/Abidjan")
+```
+exercise
+
+```{r}
+browseURL("https://docs.google.com/spreadsheets/d/1EAG49qDKPWWi0ebkVr29TLrvVnoBPfkvxYY-J3xLAHY/edit#gid=458686645")
+```
+
+```{r}
+student1 <-c("2020-03-04T06:56:29Z","2020-03-11 14:16:43","2020-03-11 14:34:33")
+student1showup <-ymd_hms(student1,tz="Asia/Taipei")
+typeof(student1showup)
+class(student1showup)
+```
+
+
+
+
+
 
 
 

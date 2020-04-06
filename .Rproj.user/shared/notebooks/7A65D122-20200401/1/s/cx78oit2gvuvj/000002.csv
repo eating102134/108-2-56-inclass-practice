@@ -1,0 +1,17 @@
+"0","student1 <-c(""2020-03-04T06:56:29Z"",""2020-03-11 14:16:43"",""2020-03-11 14:34:33"")"
+"0","student1showup <-ymd_hms(student1,tz=""Asia/Taipei"")"
+"2","Date in ISO8601 format; converting timezone from UTC to ""Asia/Taipei"".
+"
+"2","Date in ISO8601 format; converting timezone from UTC to ""Asia/Taipei"".
+"
+"0","typeof(student1showup)"
+"1","[1]"
+"1"," ""double"""
+"1","
+"
+"0","class(student1showup)"
+"1","[1]"
+"1"," ""POSIXct"""
+"1"," ""POSIXt"" "
+"1","
+"
