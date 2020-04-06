@@ -182,6 +182,86 @@ list(list("108學年第1學期","高級會計學","高等統計學"),
 )
 print(`小明108學年課表C`)
 ```
+##list會存在environment裡面的data 旁邊有放大鏡可以點開來看裡面list的層級順序
+
+```{r}
+# list含兩個lists, 子層list又各含兩個vectors
+`小明108學年課表C` <- list(
+  `108學年第1學期`=list(
+    c("108-1"), # 可只寫 "108-1"
+    c("高級會計學","高等統計學")
+       ),
+  `108學年第2學期`=list(
+    c("108-2"),
+    c("食在拉丁美洲")
+  )
+)
+print(`小明108學年課表C`)
+```
+##注意：若名稱不符規定要用「反頓點`」一對括起來，千萬不要用一對單引號'，或一對雙引號"…那就遜了
+
+GitHub使用者Martin老師，用戶email為mtlin@gm.ntpu.edu.tw，於2020-03-25T07:17:40Z在他的repo進行了更動，助教使用者emilyluckey，用戶email為emily007@gmail.com，於2020-03-26T08:18:40Z幫老師commit了這個變化，她在commit時於summary處寫下了update。
+```{r}
+Commit <-list(
+  author=list(name="Martin老師",
+              email="mtlin@gm.ntpu.edu.tw",
+              time=ymd_hms("2020-03-25T07:17:40Z")),
+  committer=list(name="emilyluckey",
+                 email="emily007@gmail.com",
+                 time=ymd_hms("2020-03-26T08:18:40Z")),
+  message=c("update")
+)
+print(Commit)
+```
+##注意如果用中文命名才需要加反頓點 英文不用 加了反而名字無法顯示出來
+
+```{r}
+browseURL("https://api.github.com/repos/tpemartin/108-2-56-inclass-practice/commits") 
+```
+
+```{r}
+library(jsonlite) # 不少同學這行會有Error，還記得如何排除嗎？
+toJSON(Commit)
+```
+exercise
+學生小明，在108學年第1學期修了Alice老師所授的個體經濟學（得分85分）、Mark老師所授的總體經濟學(得分73分)。在108學年第2學期修了Jason老師所授的作業研究（得分90分）。
+
+使用list你會怎麼記錄上面的資訊。
+```{r}
+Score <-list(
+`小明`=list(
+  `學年度`=108,
+  `學期`=1,
+       list(
+         name="Alice",
+         subject="個體經濟學",
+         score=85,
+         name="Mark",
+         subject="總體經濟學",
+         score=73),
+  `學年度`=108,
+  `學期`=2,
+        list(
+          name="Jason",
+          subject="作業研究",
+          score=90)))
+print(Score)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
