@@ -62,6 +62,7 @@ get2 <- listExample["學期"]
 str(get1)
 ```
 ##[[]]的意思是拿出來 []的意思是只留下 $的意思也是拿出來
+##如果沒有名字 可以看此物件的str()然後看他是第幾個list(位置)然後用[[]]裡面填數字
 
 ##example在前面討論使用$及[ ]取一個元素時我們創造了get1與get2兩個物件，請分別由get1, get2取出108-1學期個體經濟學教師姓名。
 ```{r}
@@ -71,6 +72,50 @@ get1_layer2
 ```
 ```{r}
 str(get2)
+```
+```{r}
+get2_layer <-get2[[1]]$`108-1`[[1]]$teacher
+get2_layer
+```
+
+##list應用
+```{r}
+today <- list(
+  list("台北市",c(highest_temp = 25),c(lowest_temp = 18)),
+  list("新北市",c(highest_temp = 24),c(lowest_temp = 15)))
+str(today)
+```
+##如果要取台北市的最高溫
+```{r}
+today[[1]][[2]] ##會發現沒辦法用$取名字來顯示最高溫 因為他是在atomic vector裡面的命名
+```
+```{r}
+##可以改成
+today <- list(
+  list("台北市",
+       highest_temp=c(highest_temp = 25),
+       lowest_temp=c(lowest_temp = 18)),
+  list("新北市",
+       highest_temp=c(highest_temp = 24),
+       lowest_temp=c(lowest_temp = 15)))
+str(today)
+```
+```{r}
+today[[1]]$highest_temp
+##不把c()裡面的命名刪掉是因為他在print的時候也會顯示
+```
+```{r}
+tomorrow <- list(
+  list("台北市",
+       highest_temp=c(highest_temp = 25),
+       lowest_temp=c(lowest_temp = 18)),
+  list("新北市",
+       highest_temp=c(highest_temp = 24),
+       lowest_temp=c(lowest_temp = 15)))
+str(tomorrow)
+```
+```{r}
+tomorrow[[1]]$highest_temp
 ```
 
 
