@@ -119,6 +119,66 @@ tomorrow[[1]]$highest_temp
 ```
 
 ##第二部影片內容
+##元素提取[.],[[.]],$.也可用來進行元素「值」的修改與新增, 使用方法為：
+#obj[.] <- value
+#obj[[.]] <- value
+#obj$. <- value
+#若.所指定的元素不存在，則為「新增」。
+#若.所指定的元素存在，則為「修改」。
+```{r}
+a <- c("1","b","TRUE")
+a
+a[[2]] <- "c" # 元素存在: 替換
+a[[4]] <- "7" # 元素不存在： 增加
+a[c(5,6)] <- c("J", "K")
+a
+```
+```{r}
+#使用前一章的向量疊代(recursive vector concatenate)法，新增一個“Mary”
+a <- c(a,c("Mary"))#ch3向量疊代
+a
+```
+```{r}
+library(lubridate)
+list1 <- 
+  list(
+    list(
+      name="Jack",
+      birthday=ymd("1998-03-21"),
+      status=c(height=177, weight=80)
+    )
+  )
+
+str(list1)
+```
+```{r}
+# 更改日期
+list1[[1]]$birthday <- ymd("1997-03-21")
+
+# 新增資料
+list1[[2]] <- list(
+  name="Mary",
+  birthday=ymd("1998-08-24")
+)
+
+str(list1)
+```
+```{r}
+list1[[2]]$status <- c(height=163, weight=45)
+list1[[1]]$status[["height"]] <- 176
+str(list1)
+```
+```{r}
+##使用[.] <-
+##由於[.]會保留母層結構，所以<-右側要使用和母層相同的型態設定：
+##母層若為list，則需用list(...)方式增加。
+##母層若為atomic vector，則用c(...)方式增加。
+list1[[1]][["age"]] <- 21
+list1[[2]]["age"] <- list(21)
+
+# 改變「一個」時，使用[[ ]]比較不會錯。
+str(list1)
+```
 
 
 
