@@ -28,3 +28,209 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+##加、減、乘、除： +, -, *, /
+```{r}
+a <- c(2, 3, 5)
+b <- c(4,-1, 3)
+```
+
+```{r}
+a+b
+a-b
+a*b
+a/b
+```
+##餘數：%% 次方：** 或 ^
+```{r}
+a %% b
+a ** b
+```
+```{r}
+##奇偶數的判斷可以用%%
+sequenceNums <- c(11, 6, 8, 11, 12, 11, 3, 7, 10, 8)
+print(sequenceNums)
+
+sequenceNums %% 2 # 餘數為1則是奇數，0則是偶數
+```
+#在多數時候R向量間的運算都是elementwise(個別元素)的運算：所有向量一一取出各自對應相同位置的元素值進行運算。
+##簡單來說elementwise就是相同位置且相同長度(通常是個別元素)的加減運算
+##但萬一你遇到長度不相同的向量要做運算怎麼辦呢?R語言裡面就會對較短的那個向量進行recycle 把短的一直重複 延長到和長的長度相等的時候
+
+```{r}
+5*c(1,3,4)+7
+# 其實是
+c(5)*c(1,3,4)+c(7)
+
+## 對向量5，向量7進行recycle:
+c(5,5,5)*c(1,3,4)+c(7,7,7)
+## Recycle等長後才進行elementwise operation:
+c(5*1+7, 5*3+7, 5*4+7)
+```
+```{r}
+# 狀況一: 堆疊一定倍數剛好一樣長
+c(2,3)/c(-2,-13,10,22)
+c(2,3,2,3)/c(-2,-13,10,22)
+# 狀況二: 倍數堆疊一定會超過，只好截斷
+c(2,3)/c(-2,-13,10)
+c(2,3,2)/c(-2,-13,10)
+```
+##Recycling不只用在數值class, 只要向量間的處理要等長度才合理時，recycling通常也會用在其他的class。
+```{r}
+paste0(
+  c("我叫"), c("小明","小美")
+)
+paste0(
+  c("他叫","我叫"), c("小明","小美","大雄")
+)
+```
+
+##relational operation
+```{r}
+example <- list(
+  name=c("小明","小花","小新","美美"),
+  height=c(175,166,170,160),
+  weight=c(77,NA,60,43),
+  birthday=lubridate::ymd(c("1998-03-11","1999-12-22","1995-08-22","2001-10-10")),
+  hobby=c("美食 旅遊","旅遊 時尚","3C 美食","音樂 旅遊"),
+  residence=c("Taipei","New Taipei","Taichung","Kaohsiung"),
+  allowance=factor(c("0-1000","1001-2000","2000+","1001-2000")),
+  bloodType=c("A","B","B","O")
+)
+```
+
+```{r}
+str(example)
+```
+## >,<,<=,>=: 分別為大於、小於、小於等於、大於等於
+#比較有分3種類型 (1)數字比較 (2)時間比較 (3)可排序類別資料比較
+#類別資料就是factor 可以分類的資料
+#第一個先介紹數字比較
+#EX:example裡誰的身高大於等於170
+```{r}
+pick_example <-example$height >=170
+example$name[pick_example]
+```
+```{r}
+source("https://www.dropbox.com/s/qsrw069n94k61lj/transcript100to103_list.R?dl=1")
+```
+```{r}
+str(transcript100to103)
+#各學屆2年級人數
+table(transcript100to103$`學屆`)
+#table這個函數是當你的物件是factor也就是有分類的時候 可以將你所選的那個元素做成分類表格
+```
+
+```{r}
+# 各學屆2年級成績大於85年數
+table(transcript100to103$`學屆`)
+pick_above85 <-transcript100to103$`成績` >=85
+table(transcript100to103$`學屆`[pick_above85])
+```
+```{r}
+# 各學屆2年級人數
+table(transcript100to103$`學屆`)
+# 各學屆2年級成績大於85人數
+table(transcript100to103$`學屆`[pick_above85])
+```
+##第二個是時間比較
+#EX:example裡誰1998年(含)以後出生
+```{r}
+print(example[c("name","birthday")])
+library(lubridate)
+above_98 <-example$birthday >= ymd("19980101")
+example$name[above_98]
+```
+#美元匯率
+```{r}
+source("https://www.dropbox.com/s/16h6ggua6qtydci/exchangeRate.R?dl=1")
+```
+```{r}
+pick_after98_01 <-exchangeRate$`期間` >=ymd("19980101")
+exchangeRate_after98 <-
+  list(
+    `期間`=exchangeRate$`期間`[pick_after98_01],
+    `幣別`=exchangeRate$`幣別`[pick_after98_01],
+    `匯率`=exchangeRate$`匯率`[pick_after98_01]
+    
+  )
+str(exchangeRate_after98)
+```
+#第三個可排序類別資料比較:
+##EX:example裡誰零用錢大於1000
+```{r}
+str(example)
+above_1000 <-example$allowance >=1000
+#如果你所選取的東西是factor 那如果你在一開始訂factor的時候沒有告知level以及可以order的話
+#上面這行程式就會有誤
+```
+```{r}
+levels(example$allowance)
+class(example$allowance)
+```
+##factor資料可進一步分成可排序，與不可排序的，如：
+#* 可排序： 以年齡層區分的類別，以所得級距區分的類別等。
+#* 不排序： 性別，學系等。
+
+#factor的設定在不調整時內定為不可排序資料，如要改成可排序類別資料，以先前已處理好的example$allowance 為例：
+```{r}
+example$allowance <- 
+  ordered(example$allowance)
+```
+#又或是一開始在設定factor的時候即把levels排好，並ordered=T
+```{r}
+example$allowance <-
+  factor(
+    example$allowance,
+    levels=c("0-1000", "1001-2000", "2000+"),
+    ordered = T # 設定為可排序factor
+  )
+```
+
+```{r}
+pick_allowanceOver1000 <- example$allowance >= "1001-2000"
+example$name[pick_allowanceOver1000]
+```
+```{r}
+jsonlite::fromJSON("https://www.dropbox.com/s/3uijub7xheib405/list_victimAges_female.json?dl=1", simplifyDataFrame = F) -> list_victimAges_female
+```
+
+```{r}
+str(list_victimAges_female)
+list_victimAges_female$`數目` <-as.integer(list_victimAges_female$`數目`)
+str(list_victimAges_female)
+list_victimAges_female$`性別` <-as.factor(list_victimAges_female$`性別`)
+str(list_victimAges_female)
+```
+```{r}
+levels(list_victimAges_female$`年齡層`) -> levels_ages
+print(levels_ages)
+```
+```{r}
+#將levels順序改成: 不詳，總計，0_5歲，12_17歲，…，70歲以上。
+list_victimAges_female$`年齡層` <-factor(list_victimAges_female$`年齡層`,
+          levels = c("不詳","0_5歲","12_17歲","18_23歲","24_29歲",
+                     "30_39歲","40_49歲","50_59歲","60_64歲","65_69歲","70歲以上"                            ),
+          ordered = T)
+str(list_victimAges_female)
+```
+```{r}
+sum(list_victimAges_female$`數目`, na.rm=T)
+#加na.rm=T是因為再加總的時候 R語言遇到NA就不能計算 因為NA的意思是有資料 但是不知道確切數字是多少
+pick_above30 <-list_victimAges_female$`年齡層` >="30_39歲"
+sum(list_victimAges_female$`數目`[pick_above30], na.rm = T)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
