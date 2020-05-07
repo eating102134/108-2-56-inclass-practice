@@ -221,6 +221,10 @@ pick_above30 <-list_victimAges_female$`年齡層` >="30_39歲"
 sum(list_victimAges_female$`數目`[pick_above30], na.rm = T)
 ```
 
+#第三部影片內容
+```{r}
+
+```
 
 
 
