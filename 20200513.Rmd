@@ -1,0 +1,204 @@
+---
+title: '20200513'
+author: '"蔡宜庭"'
+date: "2020/5/18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+char1 <- c("Wild","Apple","Donald","May","Avocada") 
+factor1 <- factor(char1)
+levels(factor1)
+#可以發現它就是照英文字母順序
+```
+##內定levels順序是根據電腦內字元排序（collating sequence）依辭典序列方式決定排序，很多時候沒有意義。
+```{r}
+char2 <- c("蔡英文","習近平","Donald Trump","蔡頭") 
+factor2 <- factor(char2)
+levels(factor2)
+library(stringr)
+sort(
+  str_sub(char2,1,1)
+)
+sort(
+  str_sub(char2,2,2)
+)
+#這個sort函數 就是用來查詢factor裡面level的排序為何 當你不知道排序的話就可以用這個來看
+##然後str_sub()這個函數則是取出這個charter裡面的第幾個字元到第幾個字元
+##像第一個str_sub(char2,1,1)就是從第一個字元取到第一個字元 意思就是要取char2裡面的第一個字
+
+```
+```{r}
+jsonlite::fromJSON("https://od.cdc.gov.tw/eic/Day_Confirmation_Age_County_Gender_19CoV.json") -> covid19
+```
+
+```{r}
+# 不可排序類別：性別、縣市、是否境外移入
+covid19$`縣市` <- 
+  factor(covid19$`縣市`)
+covid19$`性別` <-
+  factor(covid19$`性別`)
+covid19$`是否為境外移入` <-
+  factor(
+    covid19$`是否為境外移入`
+  )
+```
+#將資料中的性別 縣市 是否境外移入轉為factor
+```{r}
+# 可排序類別資料：年齡層
+covid19$`年齡層` <-
+  factor(
+    covid19$`年齡層`,
+    ordered=TRUE
+  )
+##order之前講過就是將可排序的factor資料排序 可以用level看一下順序
+```
+
+```{r}
+levels(covid19$`縣市`)
+levels(covid19$`性別`)
+levels(covid19$`是否為境外移入`)
+```
+```{r}
+covid19$`年齡層`
+levels(covid19$`年齡層`)
+```
+##從最後面的level可以發現:奇怪!為甚麼年齡最小的4排在35-39後面 那是因為電腦的排序是根據他的大辭典 他覺得要1全部都講完了 在講2在講3這樣 所以要重新跟改它的level
+
+#重新再定義factor一次
+```{r}
+##factor(目前的factor向量, levels=自訂排序)
+#levels如果放在第二個可以不寫levels= 因為程式本來就這樣規範
+levels(covid19$`性別`)
+covid19$`性別` <- factor(covid19$`性別`, c("男","女"))
+```
+```{r}
+jsonlite::fromJSON(
+  "https://www.dropbox.com/s/jckqryeh5zeat5w/regionPopulation.json?dl=1"
+) -> population
+unlist(population) -> population
+```
+##資料科學心法一：拿到新的資料先檢視「內容」、「class/type」
+```{r}
+print(population)
+class(population) # 判斷出是named integer vector(就是這個其實是一串integer 但是每個integer都有給一個名字)
+names(population) # 元素名稱是台灣各縣市
+```
+```{r}
+##2 留下levels中有的popluation元素
+levels(covid19$`縣市`) # 是名稱字串向量
+
+# 由於population元素值有names，可以用`[名稱字串向量]`取出所要的
+levels(covid19$`縣市`) -> levelsInData
+population[levelsInData] -> population
+```
+```{r}
+##3 將population由大排到小(sort(x, decreasing=T)可將x numeric vector由大排到小。
+population <- sort(population, decreasing=T)
+population
+#因為population的資料裡面現在已經剩下有關covid19的那幾個縣市 然後你要將他們按照大到小排列 後面加decreasing=T是因為不然系統會直接由小排到大 排完之後再重新存回population
+```
+```{r}
+##排完後population第一個元素值最大，它的名稱即是人口最多的縣市，第二元素值次大，它名稱是人口第二多縣市，依此類推。我們要的是population排完後的元素名稱。
+newLevels <- names(population)
+newLevels
+```
+```{r}
+covid19$`縣市` <-
+  factor(
+    covid19$`縣市`, levels=newLevels
+  )
+
+levels(covid19$`縣市`)
+#最後完成極可以發現covid19的縣市被改為由人口最大排到最小的順序了
+```
+#example:年齡應該用年齡區間起始數字排序
+```{r}
+levels(covid19$`年齡層`)
+```
+#取出levels中各年齡層的起始數字，存在startingAges
+```{r}
+level_names <- levels(covid19$`年齡層`)
+startingAges <- stringr::str_extract(
+  level_names,
+  "^[0-9]+" # regex：開頭的一串數字
+)
+startingAges
+#"^[0-9]+" ^代表從開頭開始 然後+是不確定有幾位數 但就是取數字出來
+#regex 代表正規表示式
+```
+```{r}
+#將startingAges變成named integer vector
+##(因為我們需要name vector才可以用數字排出我們想要的name再用names函數取出名字設定成我們的level)
+# 要numerical class排的才一定對
+startingAges <- as.integer(startingAges)
+##如果你尚未設定名字就直接用names(startingAges)的話 出來的結果就會式null
+names(startingAges) <- level_names
+names(startingAges)
+```
+```{r}
+#將startingAges從小排到大。
+sort(startingAges) -> startingAges
+startingAges
+```
+```{r}
+#重設levels排序
+covid19$`年齡層` <- 
+  factor(
+    covid19$`年齡層`, names(startingAges)
+  )
+levels(covid19$`年齡層`)
+##用數字排出大小後取出他上面的name!
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
