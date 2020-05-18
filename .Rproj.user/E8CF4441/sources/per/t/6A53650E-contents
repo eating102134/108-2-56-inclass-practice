@@ -221,9 +221,101 @@ factor1
 
 #東部：“花蓮縣、台東縣”
 ```{r}
-
+covid19$`地區` <- covid19$縣市
+levels(covid19$`地區`)
+currentLevels <- levels(covid19$`地區`)
+currentLevels
 ```
 
+```{r}
+# 整併
+north_regex <- "宜蘭縣|基隆市|[台臺]北市|新北市|桃園市|新竹市|新竹縣"
+middle_regex <- "苗栗縣|[台臺]中市|彰化縣|南投縣|雲林縣"
+south_regex <-
+  "嘉義市|嘉義縣|[台臺]南[縣市]|高雄市|屏東縣|澎湖縣"
+east_regex <-"花蓮縣|台東縣"
+#這個regex是代表字組的strip 第一個是宜蘭縣 最後一個是新竹縣 裡面的第三個字組有點特別 用[]的意思是台或是臺都可以 第三個字組其實就等於台北市|臺北市
+```
+#然後就可以善用str_replace 裡面如果有出現和north_regex一樣的字組的話就可以取代成"北部"
+```{r}
+currentLevels <- str_replace(currentLevels, 
+            north_regex, "北部")
+currentLevels
+currentLevels <- str_replace(currentLevels, 
+            middle_regex, "中部")
+currentLevels <- str_replace(currentLevels, 
+            south_regex, "南部")
+newLevels <- str_replace(currentLevels, 
+            east_regex, "東部")
+```
+
+```{r}
+levels(covid19$`地區`) <- newLevels
+covid19$`地區`
+```
+##example將covid19$年齡層，由5歲間距成10歲間距，使改完後的levels為4 < 5-14 < 15-24 < …< 55-64 < 65+
+```{r}
+levels(covid19$`年齡層`)
+
+# 創造10歲間距的所有可能
+start <- seq(5, 55, by=10) # 由5到55，每個值差10的數值向量
+end <- seq(14, 64, by=10)
+##這邊有用到一個特別的函數叫seq 它代表的意思是seq(start,end,by=) 以上面舉例 就是第一個數字是5然後再來每次加10 所以是5,15,25,...一直持續下去到55
+```
+```{r}
+middleLevels <- 
+  rep(
+    paste0(start,"-",end), 
+    each=2) # 每個新間距要2個
+newLevels <- c("4", middleLevels, "65+", "65+")
+##然後一樣用之前教過的paste0將start還有end合起來中間多加一個"-"
+##這裡也有一個新的函數叫做rep()是repeat的意思 就是把向量擴充後面的each= 就是擴充幾次 例如rep(x,each=2)
+```
+
+```{r}
+levels(covid19$`年齡層`) <- newLevels
+covid19$`年齡層`
+```
+#level擴充
+```{r}
+factor2 <- 
+  factor(c("好","好","普通","普通", "好"))
+levels(factor2)
+```
+```{r}
+##加一筆新資料“差”（之前沒有這類）
+factor2[[6]] <- "差"
+factor2 # 元素6變NA
+```
+```{r}
+#先擴大levels, 再加新資料
+factor2 <- 
+  factor(c("好","好","普通","普通", "好"))
+levels(factor2)
+
+# 先擴大levels
+levels(factor2) <- c(levels(factor2), "差")
+levels(factor2)
+factor2[[6]] <- "差"
+factor2
+```
+```{r}
+##factor無法用c(...)把兩個factor vector串接在一起：
+# non factor
+char1 <- c("小明","小美")
+char2 <- c("大雄","技安")
+c(char1, char2)
+
+# factor
+factor1 <- factor(c("好", "壞", "壞"))
+factor2 <- factor(c("壞", "好", "好"))
+c(factor1, factor2)
+```
+```{r}
+##正確接法
+factor1[4:6] <- factor2
+factor1
+```
 
 
 

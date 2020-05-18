@@ -1,0 +1,7 @@
+"0","middleLevels <- "
+"0","  rep("
+"0","    paste0(start,""-"",end), "
+"0","    each=2) # 每個新間距要2個"
+"0","newLevels <- c(""4"", middleLevels, ""65+"", ""65+"")"
+"0","##然後一樣用之前教過的paste0將start還有end合起來中間多加一個""-"""
+"0","##這裡也有一個新的函數叫做rep()是repeat的意思 就是把向量擴充後面的each= 就是擴充幾次 例如rep(x,each=2)"
